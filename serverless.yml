@@ -1,0 +1,43 @@
+service: expose-s3-bucket
+frameworkVersion: '3'
+
+package:
+  patterns:
+    - '!node_modules/**'
+    - '!venv/**'
+
+provider:
+  stage: dev
+  name: aws
+  profile: expr
+  region: eu-west-1
+  runtime: python3.9
+  memorySize: 128
+  timeout: 15
+  endpointType: EDGE
+  apiGateway:
+    apiKeys:
+      - bk_key
+  iam:
+    role:
+      statements:
+      - Effect: Allow
+        Action:
+          - s3:*
+        Resource: "arn:aws:s3:::*"
+
+functions:
+  list:
+    handler: app.get_list
+    events:
+      - http:
+          path: /list
+          method: get
+          private: true
+  get:
+    handler: app.get_file
+    events:
+      - http:
+          path: /get
+          method: get
+          private: true
