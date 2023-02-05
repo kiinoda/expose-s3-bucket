@@ -1,6 +1,5 @@
 import json
 import boto3
-import re
 from datetime import datetime
 from botocore.exceptions import ClientError
 
