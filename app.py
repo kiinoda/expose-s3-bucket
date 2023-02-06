@@ -2,25 +2,38 @@ import json
 import boto3
 from datetime import datetime
 from botocore.exceptions import ClientError
+from typing import Union, Tuple
+
 
 BUCKET_NAME='prod-bkhu-breeze'
 BUCKET_PREFIX="error_log/v1/"
 
 s3 = boto3.client('s3')
 
+class QSException(Exception):
+  pass
 
-def get_list(event, context):
+def get_query_string(event: any, query_string: str) -> Tuple[Union[None, QSException], Union[None, str]]:
+  error = QSException()
+  if not 'queryStringParameters' in event:
+    return (error, None)
+  if event['queryStringParameters'] is None:
+    return (error, None)
+  if not query_string in event['queryStringParameters']:
+    return (error, None)
+  if str(event['queryStringParameters'][query_string]) == '':
+    return (error, None)
+  return (None, event['queryStringParameters'][query_string])
+
+def get_list(event: any, context: any) -> dict:
   current_date=datetime.now().strftime("%Y/%m/%d")
-  if not 'queryStringParameters' in event or event['queryStringParameters'] is None or not 'date' in event['queryStringParameters']:
-    file_key=current_date
-  else:
-    file_key=str(event['queryStringParameters']['date'])
-    if file_key == '':
-      file_key=current_date
+  err, file_pattern = get_query_string(event, 'date')
+  if err is not None:
+    file_pattern = current_date
 
   aws_response = s3.list_objects_v2(
     Bucket=BUCKET_NAME,
-    Prefix=f"{BUCKET_PREFIX}{file_key}"
+    Prefix=f"{BUCKET_PREFIX}{file_pattern}"
   )
 
   if not 'Contents' in aws_response:
@@ -43,16 +56,13 @@ def get_list(event, context):
   }
 
 
-def get_file(event, context):
-  if not 'queryStringParameters' in event or event['queryStringParameters'] is None or not 'file' in event['queryStringParameters']:
+def get_file(event: any, context: any) -> dict:
+  err, file = get_query_string(event, 'file')
+  if err is not None:
     message = { "message": "No file specified." }
     return { "statusCode": 403, "body": json.dumps(message) }
 
-  file = event['queryStringParameters']['file']
   file_name = file.split('/')[-1]
-  if file == '':
-    message = { "message": "No file specified." }
-    return { "statusCode": 403, "body": json.dumps(message)}
 
   try:
     aws_response = s3.get_object(
