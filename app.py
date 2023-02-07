@@ -66,7 +66,7 @@ def get_file(event: Dict, context: Dict) -> Dict:
 
     try:
         aws_response = s3.get_object(
-            Bucket=BUCKET_NAME, Key=f"{BUCKET_PREFIX}{file_name}"
+            Bucket=BUCKET_NAME, Key=f"{BUCKET_PREFIX}{file_path}"
         )
         blob = aws_response["Body"].read()
     except ClientError as ex:
