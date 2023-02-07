@@ -15,25 +15,23 @@ class QSException(Exception):
     pass
 
 
-def get_query_string(
-    event: Dict, query_string: str
-) -> Tuple[Union[QSException, None], Union[None, str]]:
-    error = QSException()
+def get_query_string(event: Dict, query_string: str) -> str:
     if not "queryStringParameters" in event:
-        return (error, None)
+        raise QSException()
     if event["queryStringParameters"] is None:
-        return (error, None)
+        raise QSException()
     if not query_string in event["queryStringParameters"]:
-        return (error, None)
+        raise QSException()
     if str(event["queryStringParameters"][query_string]) == "":
-        return (error, None)
-    return (None, event["queryStringParameters"][query_string])
+        raise QSException()
+    return event["queryStringParameters"][query_string]
 
 
 def get_list(event: Dict, context: Dict) -> Dict:
     current_date = datetime.now().strftime("%Y/%m/%d")
-    err, file_pattern = get_query_string(event, "date")
-    if err is not None:
+    try:
+        file_pattern = get_query_string(event, "date")
+    except QSException:
         file_pattern = current_date
 
     aws_response = s3.list_objects_v2(
@@ -56,12 +54,12 @@ def get_list(event: Dict, context: Dict) -> Dict:
 
 
 def get_file(event: Dict, context: Dict) -> Dict:
-    err, file_path = get_query_string(event, "file")
-    if err is not None:
+    try:
+        file_path = get_query_string(event, "file")
+    except QSException:
         message = {"message": "No file specified."}
         return {"statusCode": 403, "body": json.dumps(message)}
 
-    assert file_path is not None
     file_name = file_path.split("/")[-1]
 
     try:
