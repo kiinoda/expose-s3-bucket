@@ -15,6 +15,9 @@ provider:
   memorySize: 128
   timeout: 15
   endpointType: EDGE
+  environment:
+    BUCKET_NAME: "prod-bkhu-breeze"
+    BUCKET_PREFIX: "error_log/v1/"
   apiGateway:
     apiKeys:
       - bk_key
