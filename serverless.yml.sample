@@ -16,8 +16,8 @@ provider:
   timeout: 15
   endpointType: EDGE
   environment:
-    BUCKET_NAME: "prod-bkhu-breeze"
-    BUCKET_PREFIX: "error_log/v1/"
+    BUCKET_NAME: "this_is_the_S3_bucket"        # customize this
+    BUCKET_PREFIX: "/export/files/from/here"    # customize this
   apiGateway:
     apiKeys:
       - bk_key
