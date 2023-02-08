@@ -1,4 +1,4 @@
-# Serverless Framework Python HTTP API on AWS
+# Expose S3 Bucket over HTTP using AWS Lambda and the Serverless Framework
 
 This code allows you to export an S3 bucket over HTTP endpoints.
 
