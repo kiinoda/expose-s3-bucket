@@ -3,7 +3,7 @@ import boto3
 import os
 from datetime import datetime
 from botocore.exceptions import ClientError
-from typing import Union, Tuple, Dict
+from typing import Dict
 
 BUCKET_NAME = os.environ["BUCKET_NAME"]
 BUCKET_PREFIX = os.environ["BUCKET_PREFIX"]
