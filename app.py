@@ -16,15 +16,10 @@ class QSException(Exception):
 
 
 def get_query_string(event: Dict, query_string: str) -> str:
-    if not "queryStringParameters" in event:
+    qsp = event.get("queryStringParameters")
+    if qsp is None or query_string not in qsp or not qsp[query_string]:
         raise QSException()
-    if event["queryStringParameters"] is None:
-        raise QSException()
-    if not query_string in event["queryStringParameters"]:
-        raise QSException()
-    if str(event["queryStringParameters"][query_string]) == "":
-        raise QSException()
-    return event["queryStringParameters"][query_string]
+    return qsp[query_string]
 
 
 def get_list(event: Dict, context: Dict) -> Dict:
