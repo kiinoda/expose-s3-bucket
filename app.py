@@ -37,10 +37,12 @@ def get_list(event: Dict, context: Dict) -> Dict:
         message = {"message": "No files found."}
         return {"statusCode": 404, "body": json.dumps(message)}
 
+    items = sorted(aws_response["Contents"], key=lambda item: item["LastModified"], reverse=True)
+
     body = {
         "files": [
             {"file": item["Key"].removeprefix(BUCKET_PREFIX), "size": item["Size"]}
-            for item in aws_response["Contents"]
+            for item in items
             if item["Key"][-1] != "/"
         ]
     }
