@@ -11,7 +11,7 @@ Clone code, bring in dependencies and customize configuration file.
 ```bash
 $ git clone git@github.com:kiinoda/expose-s3-bucket.git expose-s3-bucket
 $ cd expose-s3-bucket
-$ cp serverless.yml.example serverless.yml
+$ cp serverless.yml.sample serverless.yml
 ... update ENV vars to reflect your situation
 ... make sure the prefix DOES NOT START with a /
 ... make sure the prefix ENDS with /
