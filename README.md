@@ -1,6 +1,6 @@
-# Expose S3 Bucket over HTTP using AWS Lambda and the Serverless Framework
+# Expose S3 Bucket over HTTPS using AWS Lambda and the Serverless Framework
 
-This code allows you to export an S3 bucket over HTTP endpoints.
+This code allows you to expose, read-only, an S3 bucket over HTTPS.
 
 ## Usage
 
