@@ -16,10 +16,14 @@ class QSException(Exception):
 
 
 def get_query_string(event: Dict, query_string: str) -> str:
-    qsp = event.get("queryStringParameters")
-    if qsp is None or query_string not in qsp or not qsp[query_string]:
+    qs_params = event.get("queryStringParameters")
+    if (
+        qs_params is None
+        or query_string not in qs_params
+        or not qs_params[query_string]
+    ):
         raise QSException()
-    return qsp[query_string]
+    return qs_params[query_string]
 
 
 def get_list(event: Dict, context: Dict) -> Dict:
@@ -37,7 +41,9 @@ def get_list(event: Dict, context: Dict) -> Dict:
         message = {"message": "No files found."}
         return {"statusCode": 404, "body": json.dumps(message)}
 
-    items = sorted(aws_response["Contents"], key=lambda item: item["LastModified"], reverse=True)
+    items = sorted(
+        aws_response["Contents"], key=lambda item: item["LastModified"], reverse=True
+    )
 
     body = {
         "files": [
